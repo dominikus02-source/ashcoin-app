@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "478194785561",
+    "project_id": "ashcoin-app",
+    "storage_bucket": "ashcoin-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478194785561:android:ba66c3e189aee527df7988",
+        "android_client_info": {
+          "package_name": "com.ashcoin.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478194785561-gsb2c6j39kdd5eh8p5g3sp4gm07eb9r2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashcoin.app",
+            "certificate_hash": "189ed415972208ae16f6024f39007e069378edc1"
+          }
+        },
+        {
+          "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHYgv2fzgF08oFwnLU3LgpmVXwgKCm1HE"
+        },
+        {
+          "current_key": "AIzaSyAW4ZayLIZGbKo2NHUVlwj7bKha-nVvqt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478194785561:android:575b3673a131c096df7988",
+        "android_client_info": {
+          "package_name": "com.ashprotocol.staking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHYgv2fzgF08oFwnLU3LgpmVXwgKCm1HE"
+        },
+        {
+          "current_key": "AIzaSyAW4ZayLIZGbKo2NHUVlwj7bKha-nVvqt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
