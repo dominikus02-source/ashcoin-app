@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "478194785561-f0qvj67vjln41855vltbeudjpt5vcd66.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashcoin.app",
+            "certificate_hash": "532d5c34c240a248d5d4af5419f2a1f27beef8b4"
+          }
+        },
+        {
           "client_id": "478194785561-gsb2c6j39kdd5eh8p5g3sp4gm07eb9r2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -40,6 +48,13 @@
             {
               "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "478194785561-bght1l3ds1p3sqf5m78voerecp66dgia.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ashcoin.app"
+              }
             }
           ]
         }
@@ -72,6 +87,13 @@
             {
               "client_id": "478194785561-gv42s88nq3gr9ne0bpne8d7h73jm30ka.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "478194785561-bght1l3ds1p3sqf5m78voerecp66dgia.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ashcoin.app"
+              }
             }
           ]
         }
