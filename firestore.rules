@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+        (request.auth.token.email == "obahmamah.indonesia@gmail.com" ||
+         request.auth.token.email == "dominikus.02@gmail.com");
+    }
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // ==================== USERS & WALLETS ====================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+
+      allow update: if isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'referralCode',
+          'referredBy',
+          'partnerTier',
+          'totalCommissionEarned',
+          'totalCommissionPending',
+          'totalCommissionClaimed',
+          'ashBalance',
+          'totalPurchased'
+        ]);
+
+      // FIX: allow create juga untuk owner (saat init user pertama kali)
+      allow create: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId}/purchases/{purchaseId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ==================== STAKES ====================
+    match /stakes/{userId}/{collection=**}/{stakeId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // ==================== WITHDRAWALS ====================
+    match /withdrawals/{userId}/{collection=**}/{withdrawalId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'processedAt', 'adminNote', 'updatedAt']);
+      allow delete: if isAdmin();
+    }
+
+    // ==================== REFERRALS ====================
+    match /referrals/{userId}/{collection=**}/{referralId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /tasks/{userId}/{collection=**}/{taskId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // ==================== MESSAGES ====================
+    match /messages/{messageId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ==================== GLOBAL CHAT ====================
+    match /globalChat/{messageId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 200;
+      allow delete: if isAdmin();
+    }
+
+    // ==================== PAYMENTS ====================
+    match /payments/{paymentId} {
+      allow read: if request.auth != null
+        && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create, update: if request.auth != null
+        && (request.resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    // ==================== LEDGER ====================
+    match /ledger/{docId} {
+      allow read, create: if request.auth != null
+        && (resource == null
+            || resource.data.userId == request.auth.uid
+            || request.resource.data.userId == request.auth.uid
+            || isAdmin());
+    }
+
+    // ==================== TRANSACTIONS ====================
+    match /transactions/{txId} {
+      allow read: if request.auth != null
+        && (resource == null
+            || resource.data.senderId == request.auth.uid
+            || resource.data.receiverId == request.auth.uid
+            || isAdmin());
+      allow create: if request.auth != null;
+    }
+
+    // ==================== CONFIG ====================
+    match /protocol_updates/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    match /burn_logs/{docId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // ==================== DEFAULT LOCK ====================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

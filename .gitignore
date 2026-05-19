@@ -42,4 +42,5 @@ yarn-error.*
 *.tsbuildinfo
 
 # EAS & Local builds
-.eas/
+.eas/ashcoin_v3.apk
+android/app/build/

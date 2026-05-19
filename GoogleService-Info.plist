@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>478194785561-bght1l3ds1p3sqf5m78voerecp66dgia.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.478194785561-bght1l3ds1p3sqf5m78voerecp66dgia</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>478194785561-gsb2c6j39kdd5eh8p5g3sp4gm07eb9r2.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCt5wMKwMhU62PFF3rdaUlzDbTeGMMi71E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>478194785561</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ashcoin.app</string>
+	<key>PROJECT_ID</key>
+	<string>ashcoin-app</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ashcoin-app.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:478194785561:ios:6c8256b08e7cf8f9df7988</string>
+</dict>
+</plist>

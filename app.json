@@ -2,7 +2,7 @@
   "expo": {
     "name": "ASH COIN",
     "slug": "ashcoin-app",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "scheme": "ashcoinapp",
@@ -19,11 +19,13 @@
     },
     "android": {
       "package": "com.ashcoin.app",
+      "versionCode": 2,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ash-icon.png",
         "backgroundColor": "#0f172a"
-      }
+      },
+      "permissions": []
     },
     "web": {
       "bundler": "metro",
