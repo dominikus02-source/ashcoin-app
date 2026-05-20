@@ -117,13 +117,11 @@ exports.completeMiningSession = functions.https.onCall(async (data, context) => 
         const freshSnap = await t.get(userRef);
         const freshData = freshSnap.data();
         const currentAshBalance = normalizeBalance(freshData.ASHBalance);
-        const currentFunding = normalizeBalance(freshData.wallets?.funding ?? 0);
         const newAshBalance = currentAshBalance + earned;
-        const newFunding = currentFunding + earned;
         t.update(userRef, {
             balance: newBalance,
             ASHBalance: newAshBalance,
-            'wallets.funding': newFunding,
+            'wallets.funding': newAshBalance,
             'mining.isActive': false,
             'mining.startTime': null,
             'mining.lastSync': now,
@@ -158,11 +156,11 @@ exports.claimDailyBonus = functions.https.onCall(async (data, context) => {
         const balance = normalizeBalance(data.balance);
         const newBalance = balance + bonus;
         const ashBalance = normalizeBalance(data.ASHBalance);
-        const funding = normalizeBalance(data.wallets?.funding ?? 0);
+        const newAshBalance = ashBalance + bonus;
         t.update(userRef, {
             balance: newBalance,
-            ASHBalance: ashBalance + bonus,
-            'wallets.funding': funding + bonus,
+            ASHBalance: newAshBalance,
+            'wallets.funding': newAshBalance,
             lastDailyClaim: Date.now(),
             stakingUnlocked: newBalance >= 10000,
         });
@@ -297,12 +295,10 @@ exports.transferFromStaking = functions.https.onCall(async (data, context) => {
         }
         const newAshBalance = ashBalance - amount;
         const newBalance = balance + amount;
-        const wallets = userData.wallets || { funding: 0, trading: 0 };
-        const newFunding = Math.max(0, normalizeBalance(wallets.funding) - amount);
         t.update(db.collection('users').doc(uid), {
             balance: newBalance,
             ASHBalance: newAshBalance,
-            'wallets.funding': newFunding,
+            'wallets.funding': newAshBalance,
         });
         t.create(db.collection('users').doc(uid).collection('transactions').doc(), {
             type: 'transfer_from_staking',
