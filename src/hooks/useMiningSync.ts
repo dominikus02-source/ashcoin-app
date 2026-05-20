@@ -96,12 +96,14 @@ export function useMiningSync() {
           const normalizedBalance = normalizeBalance(data.balance);
           const normalizedAshBalance = normalizeBalance(data.ASHBalance);
 
-          if (normalizedBalance !== data.balance || normalizedAshBalance !== data.ASHBalance) {
+          const currentFunding = data.wallets?.funding ?? 0;
+          if (normalizedBalance !== data.balance || normalizedAshBalance !== data.ASHBalance || normalizedAshBalance !== currentFunding) {
             await updateDoc(userRef, {
               balance: normalizedBalance,
               ASHBalance: normalizedAshBalance,
+              'wallets.funding': normalizedAshBalance,
             });
-            console.log(`[BALANCE] Normalized: balance=${normalizedBalance}, ASHBalance=${normalizedAshBalance}`);
+            console.log(`[BALANCE] Normalized: balance=${normalizedBalance}, ASHBalance=${normalizedAshBalance}, wallets.funding=${normalizedAshBalance}`);
           }
 
           if (!data.stakingUnlocked && normalizedBalance >= STAKING_UNLOCK_THRESHOLD) {
