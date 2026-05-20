@@ -9,7 +9,6 @@ import { useSettingsStore, themes, translations } from '../../src/stores/useSett
 import { useMiningSync } from '../../src/hooks/useMiningSync';
 import OnboardingModal from '../../components/OnboardingModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSettingsStore as SettingsStore } from '../../src/stores/useSettingsStore';
 
 const MINING_DURATION_MS = 6 * 60 * 60 * 1000;
 const ONBOARDING_KEY = 'ash_onboarding_done';
@@ -232,47 +231,45 @@ export default function Dashboard() {
           )}
         </View>
 
-        {!isMining && (
-          <View style={styles.boostSection}>
-            <Text style={[styles.boostTitle, { color: colors.text }]}>{language === 'id' ? 'Tingkatkan Earning' : 'Boost Earnings'}</Text>
-            <View style={styles.boostRow}>
-              <TouchableOpacity style={[styles.boostCard, { backgroundColor: colors.card, borderColor: '#00f2ff' }]} onPress={handleNormalBoost}>
-                <View style={[styles.boostIcon, { backgroundColor: 'rgba(0,242,255,0.15)' }]}>
-                  <Shield size={24} color="#00f2ff" />
-                </View>
-                <Text style={[styles.boostName, { color: colors.text }]}>{language === 'id' ? 'Standard Boost' : 'Standard Boost'}</Text>
-                <Text style={[styles.boostDesc, { color: colors.textSecondary }]}>{language === 'id' ? '30 menit (+50%)' : '30 min (+50%)'}</Text>
-                <Text style={[styles.boostCost, { color: '#00f2ff' }]}>{language === 'id' ? 'Tonton Iklan' : 'Watch Ad'}</Text>
-              </TouchableOpacity>
+        <View style={styles.boostSection}>
+          <Text style={[styles.boostTitle, { color: colors.text }]}>{language === 'id' ? 'Tingkatkan Earning' : 'Boost Earnings'}</Text>
+          <View style={styles.boostRow}>
+            <TouchableOpacity style={[styles.boostCard, { backgroundColor: colors.card, borderColor: '#00f2ff' }]} onPress={handleNormalBoost}>
+              <View style={[styles.boostIcon, { backgroundColor: 'rgba(0,242,255,0.15)' }]}>
+                <Shield size={24} color="#00f2ff" />
+              </View>
+              <Text style={[styles.boostName, { color: colors.text }]}>{language === 'id' ? 'Standard Boost' : 'Standard Boost'}</Text>
+              <Text style={[styles.boostDesc, { color: colors.textSecondary }]}>{language === 'id' ? '30 menit (+50%)' : '30 min (+50%)'}</Text>
+              <Text style={[styles.boostCost, { color: '#00f2ff' }]}>{language === 'id' ? 'Tonton Iklan' : 'Watch Ad'}</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.boostCard, { backgroundColor: colors.card, borderColor: '#fbbf24' }]} onPress={handlePremiumBoost}>
-                <View style={[styles.boostIcon, { backgroundColor: 'rgba(251,191,36,0.15)' }]}>
-                  <Crown size={24} color="#fbbf24" />
-                </View>
-                <Text style={[styles.boostName, { color: colors.text }]}>{language === 'id' ? 'Premium Boost' : 'Premium Boost'}</Text>
-                <Text style={[styles.boostDesc, { color: colors.textSecondary }]}>{language === 'id' ? '7 hari (+50%)' : '7 days (+50%)'}</Text>
-                <Text style={[styles.boostCost, { color: '#fbbf24' }]}>14 ASH</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={[styles.boostCard, { backgroundColor: colors.card, borderColor: '#fbbf24' }]} onPress={handlePremiumBoost}>
+              <View style={[styles.boostIcon, { backgroundColor: 'rgba(251,191,36,0.15)' }]}>
+                <Crown size={24} color="#fbbf24" />
+              </View>
+              <Text style={[styles.boostName, { color: colors.text }]}>{language === 'id' ? 'Premium Boost' : 'Premium Boost'}</Text>
+              <Text style={[styles.boostDesc, { color: colors.textSecondary }]}>{language === 'id' ? '7 hari (+50%)' : '7 days (+50%)'}</Text>
+              <Text style={[styles.boostCost, { color: '#fbbf24' }]}>14 ASH</Text>
+            </TouchableOpacity>
           </View>
-        )}
+        </View>
 
-        <View style={styles.actionsGrid}>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.card }]} onPress={() => router.push('/wallet')}>
-            <Gift size={24} color="#fbbf24" />
-            <Text style={[styles.actionText, { color: colors.text }]}>{t.wallet}</Text>
+        <View style={styles.quickLinks}>
+          <TouchableOpacity style={[styles.quickLink, { backgroundColor: colors.card }]} onPress={() => router.push('/wallet')}>
+            <Gift size={20} color="#fbbf24" />
+            <Text style={[styles.quickLinkText, { color: colors.text }]}>{t.wallet}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.card }]} onPress={() => router.push('/market')}>
-            <TrendingUp size={24} color="#00f2ff" />
-            <Text style={[styles.actionText, { color: colors.text }]}>{t.market}</Text>
+          <TouchableOpacity style={[styles.quickLink, { backgroundColor: colors.card }]} onPress={() => router.push('/market')}>
+            <TrendingUp size={20} color="#00f2ff" />
+            <Text style={[styles.quickLinkText, { color: colors.text }]}>{t.market}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.card }]} onPress={() => Alert.alert(t.dailyBonus, t.comeBackTomorrow)}>
-            <Gift size={24} color="#10b981" />
-            <Text style={[styles.actionText, { color: colors.text }]}>{t.dailyBonus}</Text>
+          <TouchableOpacity style={[styles.quickLink, { backgroundColor: colors.card }]} onPress={() => Alert.alert(t.dailyBonus, t.comeBackTomorrow)}>
+            <Gift size={20} color="#10b981" />
+            <Text style={[styles.quickLinkText, { color: colors.text }]}>{t.dailyBonus}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionCard, { backgroundColor: colors.card }]} onPress={() => setShowOnboarding(true)}>
-            <RotateCcw size={24} color="#a855f7" />
-            <Text style={[styles.actionText, { color: colors.text }]}>{t.guide}</Text>
+          <TouchableOpacity style={[styles.quickLink, { backgroundColor: colors.card }]} onPress={() => setShowOnboarding(true)}>
+            <RotateCcw size={20} color="#a855f7" />
+            <Text style={[styles.quickLinkText, { color: colors.text }]}>{t.guide}</Text>
           </TouchableOpacity>
         </View>
 
@@ -305,7 +302,7 @@ const styles = StyleSheet.create({
   progressBar: { flex: 1, height: 8, borderRadius: 4, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 4 },
   progressText: { fontSize: 14, fontWeight: '700', minWidth: 40, textAlign: 'right' },
-  timer: { fontSize: 48, fontWeight: '900', textAlign: 'center', marginBottom: 20, letterSpacing: 2 },
+  timer: { fontSize: 28, fontWeight: '900', textAlign: 'center', marginBottom: 20, letterSpacing: 2 },
   rateText: { fontSize: 14, textAlign: 'center', marginBottom: 16 },
   miningBtn: { flexDirection: 'row', paddingVertical: 16, borderRadius: 14, alignItems: 'center', justifyContent: 'center', gap: 10 },
   miningBtnText: { fontSize: 16, fontWeight: '900' },
@@ -317,7 +314,7 @@ const styles = StyleSheet.create({
   boostName: { fontSize: 14, fontWeight: '800', marginBottom: 4 },
   boostDesc: { fontSize: 12, marginBottom: 8 },
   boostCost: { fontSize: 13, fontWeight: '700' },
-  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between' },
-  actionCard: { width: '48%', padding: 20, borderRadius: 16, alignItems: 'center', gap: 8 },
-  actionText: { fontSize: 14, fontWeight: '700' },
+  quickLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'space-between' },
+  quickLink: { width: '23%', padding: 14, borderRadius: 14, alignItems: 'center', gap: 6 },
+  quickLinkText: { fontSize: 11, fontWeight: '700' },
 });

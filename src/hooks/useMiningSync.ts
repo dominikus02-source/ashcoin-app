@@ -81,6 +81,7 @@ export function useMiningSync() {
           await setDoc(userRef, {
             balance: 2.0,
             ASHBalance: 0,
+            wallets: { funding: 0, trading: 0 },
             stakingUnlocked: false,
             mining: { isActive: false, startTime: null, lastSync: Date.now() },
             boosts: { normalEndTime: 0, premiumEndTime: 0 },

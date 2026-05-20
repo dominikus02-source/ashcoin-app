@@ -255,11 +255,14 @@ exports.transferToStaking = functions.https.onCall(async (data, context) => {
 
     const newBalance = balance - amount;
     const newAshBalance = ashBalance + amount;
+    const wallets = userData.wallets || { funding: 0, trading: 0 };
+    const newFunding = normalizeBalance(wallets.funding) + amount;
 
     t.update(db.collection('users').doc(uid), {
       balance: newBalance,
       ASHBalance: newAshBalance,
       stakingUnlocked: true,
+      'wallets.funding': newFunding,
     });
 
     t.create(
@@ -301,10 +304,13 @@ exports.transferFromStaking = functions.https.onCall(async (data, context) => {
 
     const newAshBalance = ashBalance - amount;
     const newBalance = balance + amount;
+    const wallets = userData.wallets || { funding: 0, trading: 0 };
+    const newFunding = Math.max(0, normalizeBalance(wallets.funding) - amount);
 
     t.update(db.collection('users').doc(uid), {
       balance: newBalance,
       ASHBalance: newAshBalance,
+      'wallets.funding': newFunding,
     });
 
     t.create(

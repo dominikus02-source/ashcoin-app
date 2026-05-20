@@ -44,3 +44,4 @@ yarn-error.*
 # EAS & Local builds
 .eas/ashcoin_v3.apk
 android/app/build/
+ashcoin_v3.apk
