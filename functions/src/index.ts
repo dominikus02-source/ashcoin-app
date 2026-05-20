@@ -89,9 +89,15 @@ exports.completeMiningSession = functions.https.onCall(async (data, context) => 
     const freshSnap = await t.get(userRef);
     const freshData = freshSnap.data()!;
     
+    const currentAshBalance = normalizeBalance(freshData.ASHBalance);
+    const currentFunding = normalizeBalance(freshData.wallets?.funding ?? 0);
+    const newAshBalance = currentAshBalance + earned;
+    const newFunding = currentFunding + earned;
+
     t.update(userRef, {
       balance: newBalance,
-      ASHBalance: normalizeBalance(freshData.ASHBalance),
+      ASHBalance: newAshBalance,
+      'wallets.funding': newFunding,
       'mining.isActive': false,
       'mining.startTime': null,
       'mining.lastSync': now,
@@ -132,9 +138,13 @@ exports.claimDailyBonus = functions.https.onCall(async (data, context) => {
     const balance = normalizeBalance(data.balance);
     const newBalance = balance + bonus;
 
+    const ashBalance = normalizeBalance(data.ASHBalance);
+    const funding = normalizeBalance(data.wallets?.funding ?? 0);
+
     t.update(userRef, {
       balance: newBalance,
-      ASHBalance: normalizeBalance(data.ASHBalance),
+      ASHBalance: ashBalance + bonus,
+      'wallets.funding': funding + bonus,
       lastDailyClaim: Date.now(),
       stakingUnlocked: newBalance >= 10000,
     });
@@ -383,7 +393,7 @@ exports.ownerEditAshBalance = functions.https.onCall(async (data, context) => {
   const oldAshBalance = normalizeBalance(snap.data()!.ASHBalance);
 
   await db.runTransaction(async (t) => {
-    t.update(userRef, { ASHBalance: newAshBalance });
+    t.update(userRef, { ASHBalance: newAshBalance, 'wallets.funding': newAshBalance });
 
     t.create(
       userRef.collection('ashBalanceAudit').doc(),
