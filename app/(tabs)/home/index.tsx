@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { useCallback, useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { colors, spacing } from '../../../src/constants';
 import { Header } from '../../../src/components/common/Header';
 import { PriceChart } from '../../../src/components/common/PriceChart';
@@ -9,49 +10,80 @@ import { QuickActions } from '../../../src/components/common/QuickActions';
 import { SyndicateCard } from '../../../src/components/common/SyndicateCard';
 import { PortfolioChart } from '../../../src/components/common/PortfolioChart';
 import { ActivityList } from '../../../src/components/common/ActivityList';
+import { useUserStore } from '../../../src/store/useUserStore';
+import { useNodeStore, NODE_TIERS } from '../../../src/store/useNodeStore';
 import { useAppStore } from '../../../src/store/useAppStore';
+import { db } from '../../../src/lib/firebase';
 import { PricePoint, SyndicateNode, PortfolioAsset, Transaction } from '../../../src/types';
+import { formatBalance } from '../../../src/utils';
 
 const MOCK_PRICES: PricePoint[] = Array.from({ length: 100 }, (_, i) => ({
   timestamp: Date.now() - (99 - i) * 3600000,
   price: 0.42 + Math.sin(i / 10) * 0.05 + Math.random() * 0.02,
 }));
 
-const MOCK_NODE: SyndicateNode = {
-  hashrate: 0.048,
-  dailyReward: 1.152,
-  totalEarned: 47.5,
-  uptime: 99.2,
-  temperature: 42,
-  status: 'active',
-  tier: 'Starter',
-  hourlyRate: 0.048,
-  startTime: Date.now() - 3600000,
-};
-
-const MOCK_PORTFOLIO: PortfolioAsset[] = [
-  { symbol: 'ASH', name: 'ASH Coin', balance: 1250, valueUSD: 525, change24h: 5.23, color: '#6C5CE7' },
-  { symbol: 'sASH', name: 'Staked ASH', balance: 500, valueUSD: 210, change24h: 5.23, color: '#00CEC9' },
-];
-
-const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: '1', type: 'mining_reward', amount: 0.048, description: 'Mining Reward - 0.048 ASH earned', balanceAfter: 1250.048, createdAt: Date.now() - 3600000, status: 'completed' },
-  { id: '2', type: 'transfer_to_staking', amount: -10, description: 'Transferred 10 ASH to Staking', balanceAfter: 1240, createdAt: Date.now() - 7200000, status: 'completed' },
-  { id: '3', type: 'daily_bonus', amount: 0.005, description: 'Daily Bonus', balanceAfter: 1250, createdAt: Date.now() - 86400000, status: 'completed' },
-  { id: '4', type: 'mining_reward', amount: 0.052, description: 'Mining Reward - 0.052 ASH earned', balanceAfter: 1249.995, createdAt: Date.now() - 90000000, status: 'completed' },
-];
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [timeframe, setTimeframe] = useState('24H');
-  const { userData, ashPrice, setAshPrice } = useAppStore();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const { balance, ashBalance, fundingBalance, tradingBalance, photoURL, displayName, isLoading: userLoading } = useUserStore();
+  const { status, hashrate, dailyReward, uptime, totalEarned, tier, hourlyRate } = useNodeStore();
+  const { ashPrice } = useAppStore();
+  const { uid } = useUserStore.getState();
+
+  useEffect(() => {
+    if (!uid) return;
+    const unsub = onSnapshot(
+      doc(db, 'users', uid),
+      (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        const txs: Transaction[] = (data.transactions || []).slice(-10);
+        setTransactions(txs);
+        setLoading(false);
+      },
+      () => setLoading(false)
+    );
+    return unsub;
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await new Promise((r) => setTimeout(r, 1500));
     setRefreshing(false);
   }, []);
+
+  const node: SyndicateNode = {
+    hashrate,
+    dailyReward,
+    totalEarned,
+    uptime,
+    temperature: 42,
+    status: status as SyndicateNode['status'],
+    tier,
+    hourlyRate,
+    startTime: status === 'active' ? Date.now() - 3600000 : null,
+  };
+
+  const portfolioAssets: PortfolioAsset[] = [
+    { symbol: 'ASH', name: 'ASH Coin', balance: fundingBalance, valueUSD: fundingBalance * ashPrice, change24h: 5.23, color: '#6C5CE7' },
+    { symbol: 'sASH', name: 'Staked ASH', balance: ashBalance, valueUSD: ashBalance * ashPrice, change24h: 5.23, color: '#00CEC9' },
+    { symbol: 'TRD', name: 'Trading', balance: tradingBalance, valueUSD: tradingBalance * ashPrice, change24h: 0, color: '#FDCB6E' },
+  ];
+
+  const totalValueUSD = portfolioAssets.reduce((s, a) => s + a.valueUSD, 0);
+
+  if (userLoading || loading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={{ color: colors.textSecondary, marginTop: spacing.md }}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -60,21 +92,17 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         <Header
-          ashBalance={userData?.balance || 1250}
-          ashPrice={ashPrice || 0.42}
-          avatarUrl={userData?.photoURL}
+          ashBalance={balance}
+          ashPrice={ashPrice}
+          avatarUrl={photoURL}
           onNotificationPress={() => {}}
-          onSettingsPress={() => router.push('/(main)/profile')}
+          onSettingsPress={() => router.push('/(tabs)/profile')}
         />
 
         <View style={styles.content}>
-          <PriceChart
-            data={MOCK_PRICES}
-            timeframe={timeframe}
-            onTimeframeChange={setTimeframe}
-          />
+          <PriceChart data={MOCK_PRICES} timeframe={timeframe} onTimeframeChange={setTimeframe} />
 
-          <SyndicateCard node={MOCK_NODE} />
+          <SyndicateCard node={node} />
 
           <QuickActions
             onStake={() => router.push('/(tabs)/syndicate')}
@@ -83,12 +111,9 @@ export default function HomeScreen() {
             onWithdraw={() => router.push('/(tabs)/wallet')}
           />
 
-          <PortfolioChart
-            assets={MOCK_PORTFOLIO}
-            totalValue={MOCK_PORTFOLIO.reduce((s, a) => s + a.valueUSD, 0)}
-          />
+          <PortfolioChart assets={portfolioAssets} totalValue={totalValueUSD} />
 
-          <ActivityList transactions={MOCK_TRANSACTIONS} />
+          <ActivityList transactions={transactions} />
         </View>
 
         <View style={{ height: 40 }} />

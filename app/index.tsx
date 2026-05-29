@@ -36,7 +36,7 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={uid ? '/(main)/dashboard' : '/(auth)/login'} />;
+  return <Redirect href={uid ? '/(tabs)/home' : '/(auth)/login'} />;
 }
 
 const styles = StyleSheet.create({
