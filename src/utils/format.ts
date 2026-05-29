@@ -45,3 +45,10 @@ export function parseHashrate(hashrate: number): string {
   if (hashrate >= 0.001) return `${(hashrate * 1000).toFixed(2)} mASH/h`;
   return `${(hashrate * 1_000_000).toFixed(0)} µASH/h`;
 }
+
+export function formatCompact(value: number): string {
+  if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)}B`;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(2)}K`;
+  return value.toFixed(4);
+}
